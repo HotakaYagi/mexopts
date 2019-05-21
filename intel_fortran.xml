@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config
+    Name="Intel Fortran Composer XE"
+    ShortName="ifort"
+    Manufacturer="Intel"
+    Version=""
+    Language="FORTRAN"
+    Priority="A"
+    Location="$IFORT_INSTALLDIR" >
+    <Details
+        CompilerExecutable="$FC"
+        CompilerDefines="$FDEFINES"
+        CompilerFlags="$FFLAGS"
+        OptimizationFlags="$FOPTIMFLAGS"
+        DebugFlags="$FDEBUGFLAGS"
+        IncludeFlags="$INCLUDE"
+        LinkerLibraries="$LINKLIBS"
+        LinkerOptimizationFlags="$LDOPTIMFLAGS"
+        LinkerDebugFlags="$LDDEBUGFLAGS"
+
+        CompilerDefineFormatter="-D%s"
+        LinkerLibrarySwitchFormatter="-l%s"
+        LinkerPathFormatter="-L%s"
+        />
+    <vars
+        CMDLINE1="$FC -c $FDEFINES $INCLUDE $FFLAGS $OPTIM $SRC -o $OBJ"
+        CMDLINE2="$LDF $LDFLAGSVER $LINKOPTIM $OBJS $FLIBS $LINKLIBS -o $EXE"
+        CMDLINE4="xcrun install_name_tool -change libifcore.dylib @rpath/libifcore.dylib $EXE"
+        CMDLINE5="xcrun install_name_tool -change libimf.dylib @rpath/libimf.dylib $EXE"
+        CMDLINE6="xcrun install_name_tool -change libintlc.dylib @rpath/libintlc.dylib $EXE"
+        CMDLINE7="xcrun install_name_tool -change libirc.dylib @rpath/libirc.dylib $EXE"
+        CMDLINE8="xcrun install_name_tool -change libsvml.dylib @rpath/libsvml.dylib $EXE"
+
+        FC="$IFORT_INSTALLDIR/ifort"
+        FDEFINES=""
+        FFLAGS="-fexceptions -fpp -mp1 -fp-model source -assume bscc -D__LP64__ "
+        INCLUDE="-I&quot;$MATLABROOT/extern/include&quot; -I&quot;$MATLABROOT/simulink/include&quot;"
+        FOPTIMFLAGS="-O2"
+        FDEBUGFLAGS="-g"
+        MACOSX_DEPLOYMENT_TARGET="10.9"
+
+
+        LDF="$XCRUN_DIR/xcrun -sdk macosx$SDKVER clang"
+        BUNDLEFLAG="-bundle"
+        LDFLAGS="-Wl,-twolevel_namespace -undefined error -mmacosx-version-min=$MACOSX_DEPLOYMENT_TARGET -Wl,-syslibroot,$ISYSROOT $LINKEXPORT $BUNDLEFLAG"
+        LINKEXPORT="-Wl,-exported_symbols_list,&quot;$MATLABROOT/extern/lib/maci64/fexport.map&quot;"
+        LDFLAGSVER="-Wl,-twolevel_namespace -undefined error -mmacosx-version-min=$MACOSX_DEPLOYMENT_TARGET -Wl,-syslibroot,$ISYSROOT $LINKEXPORTVER $BUNDLEFLAG"
+        LINKEXPORTVER="-Wl,-exported_symbols_list,&quot;$MATLABROOT/extern/lib/maci64/fortran_exportsmexfileversion.map&quot;"
+        LINKLIBS="-L&quot;$MATLABROOT/bin/maci64&quot; -lmx -lmex -lmat -L&quot;$IFORT_LIBDIR&quot; -lifcore -limf -lintlc -lirc -lsvml"
+        LDOPTIMFLAGS="-O"
+        LDDEBUGFLAGS="-g"
+
+        OBJEXT=".o"
+        LDEXT=".mexmaci64"
+        SETENV="FC=&quot;$FC&quot;
+                FFLAGS=&quot;$FFLAGS $FDEFINES&quot;
+                FOPTIMFLAGS=&quot;$FOPTIMFLAGS&quot;
+                FDEBUGFLAGS=&quot;$FDEBUGFLAGS&quot;
+                LDF=&quot;$LDF&quot;
+                LDFLAGS=&quot;$LDFLAGS $LINKLIBS $LINKEXPORT&quot;
+                LDDEBUGFLAGS=&quot;$LDDEBUGFLAGS&quot;"
+
+    />
+    <client>
+        <engine
+            LINKLIBS="-L&quot;$MATLABROOT/bin/maci64&quot; -lmx -lmat -leng -lSystem -L&quot;$IFORT_LIBDIR&quot; &quot;$IFORT_LIBDIR/libifport.a&quot; &quot;$IFORT_LIBDIR/libifcore.a&quot; &quot;$IFORT_LIBDIR/libimf.a&quot;  &quot;$IFORT_LIBDIR/libipgo.a&quot; &quot;$IFORT_LIBDIR/libirc.a&quot; &quot;$IFORT_LIBDIR/libsvml.a&quot; -lcrt1.10.6.o &quot;$IFORT_LIBDIR/for_main.o&quot; &quot;$CLANGRT_DIR/libclang_rt.osx.a&quot;"
+            LINKEXPORT=""
+            LINKEXPORTVER=""
+            LDEXT=""
+            BUNDLEFLAG=""
+        />
+    </client>
+    <locationFinder>
+        <IFORT_INSTALLDIR>
+            <or>
+                <and>
+                    <or>
+                        <envVarExists name="IFORT_COMPILER17" />
+                        <envVarExists name="IFORT_COMPILER16" />
+                        <envVarExists name="IFORT_COMPILER15" />
+                        <envVarExists name="IFORT_COMPILER14" />
+                        <envVarExists name="IFORT_COMPILER13" />
+                    </or>
+                    <dirExists name="$$/bin/intel64" />
+                </and>
+                <and>
+                    <cmdReturns name="which ifort" />
+                    <dirExists name="$$" />
+                </and>
+            </or>
+        </IFORT_INSTALLDIR>
+        <IFORT_LIBDIR>
+            <or>
+                <and>
+                    <or>
+                        <envVarExists name="IFORT_COMPILER17" />
+                        <envVarExists name="IFORT_COMPILER16" />
+                        <envVarExists name="IFORT_COMPILER15" />
+                        <envVarExists name="IFORT_COMPILER14" />
+                        <envVarExists name="IFORT_COMPILER13" />
+                    </or>
+                    <dirExists name="$$/compiler/lib" />
+                </and>
+                <and>
+                    <cmdReturns name="which ifort" />
+                    <dirExists name="$$/../../compiler/lib" />
+                </and>
+            </or>
+        </IFORT_LIBDIR>
+        <ISYSROOT>
+            <cmdReturns name="xcrun -sdk macosx --show-sdk-path"/>
+        </ISYSROOT>
+        <XCODE_AGREED_VERSION>
+            <and diagnostic="Xcode is installed, but its license has not been accepted. Run Xcode and accept its license agreement." >
+                <or>
+                    <cmdReturns name="defaults read com.apple.dt.Xcode IDEXcodeVersionForAgreedToGMLicense"/>
+                    <cmdReturns name="defaults read /Library/Preferences/com.apple.dt.Xcode IDEXcodeVersionForAgreedToGMLicense"/>
+                </or>
+                <cmdReturns name="&#10;agreed=$$ &#10; if echo $agreed | grep -E '[\.\&quot;]' >/dev/null; then &#10; lhs=`expr &quot;$agreed&quot; : '\([0-9]*\)[\.].*'` &#10;  rhs=`expr &quot;$agreed&quot; : '[0-9]*[\.]\(.*\)$'` &#10; if echo $rhs | grep -E '[\.&quot;]' >/dev/null; then &#10; rhs=`expr &quot;$rhs&quot; : '\([0-9]*\)[\.].*'` &#10; fi &#10; if [ $lhs -gt 4 ] || ( [ $lhs -eq 4 ] &amp;&amp; [ $rhs -ge 3 ] ); then &#10; echo $agreed &#10; else &#10; exit 1&#10; fi &#10; fi" />
+            </and>
+        </XCODE_AGREED_VERSION>
+        <CLANGRT_DIR>
+            <and>
+                <cmdReturns name="xcode-select -print-path"/>
+                <cmdReturns name="find $$ -name libclang_rt.osx.a" />
+                <dirExists name="$$" />
+            </and>
+        </CLANGRT_DIR>
+        <XCRUN_DIR>
+            <and>
+                <cmdReturns name="which xcrun" />
+                <dirExists name="$$" />
+            </and>
+        </XCRUN_DIR>
+        <SDKVER>
+            <cmdReturns name="xcrun -sdk macosx --show-sdk-version"/>
+        </SDKVER>
+    </locationFinder>
+</config>
